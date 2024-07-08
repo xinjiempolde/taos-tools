@@ -936,6 +936,7 @@ static void *createTable(void *sarg) {
     int         w = 0; // record tagData
 
     int smallBatchCount = 0;
+    generateTagData(stbInfo, tagData, TAG_BATCH_COUNT, csvFile);
     for (uint64_t i = pThreadInfo->start_table_from;
                   i <= pThreadInfo->end_table_to && !g_arguments->terminate;
                   i++) {
@@ -963,12 +964,6 @@ static void *createTable(void *sarg) {
         } else {
             if (0 == len) {
                 batchNum = 0;
-            }
-            // generator
-            if (w == 0) {
-                if(!generateTagData(stbInfo, tagData, TAG_BATCH_COUNT, csvFile)) {
-                    goto create_table_end;
-                }
             }
 
             len = generateChildTblName(len, pThreadInfo->buffer,
@@ -3491,13 +3486,6 @@ int32_t initInsertThread(SDataBase* database, SSuperTable* stbInfo, int32_t nthr
                     goto END;
                 }
                 if (stmtN) {
-                    // generator
-                    if (w == 0) {
-                        if(!generateTagData(stbInfo, tagData, TAG_BATCH_COUNT, csvFile)) {
-                            goto END;
-                        }
-                    }
-
                     if (prepareStmt(stbInfo, pThreadInfo->conn->stmt, tagData, w)) {
                         goto END;
                     }
